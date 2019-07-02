@@ -56,6 +56,22 @@ open class ButtonBarView: UICollectionView {
             updateSelectedBarYPosition()
         }
     }
+    internal var selectedBarWidth: CGFloat = 0 {
+        didSet {
+            updateSelectedBarXPosition()
+        }
+    }
+    
+    internal var selectedBarTopOffset: CGFloat = 0 {
+        didSet {
+            updateSelectedBarYPosition()
+        }
+    }
+    internal var selectedBarHasRoundedCorners = false {
+        didSet {
+            updateCornerRadius()
+        }
+    }
     var selectedBarVerticalAlignment: SelectedBarVerticalAlignment = .bottom
     var selectedBarAlignment: SelectedBarAlignment = .center
     var selectedIndex = 0
@@ -170,16 +186,16 @@ open class ButtonBarView: UICollectionView {
 
     private func updateSelectedBarYPosition() {
         var selectedBarFrame = selectedBar.frame
-
+        
         switch selectedBarVerticalAlignment {
         case .top:
             selectedBarFrame.origin.y = 0
         case .middle:
-            selectedBarFrame.origin.y = (frame.size.height - selectedBarHeight) / 2
+            selectedBarFrame.origin.y = ((frame.size.height - selectedBarHeight) / 2) + selectedBarTopOffset
         case .bottom:
-            selectedBarFrame.origin.y = frame.size.height - selectedBarHeight
+            selectedBarFrame.origin.y = frame.size.height - selectedBarHeight + selectedBarTopOffset
         }
-
+        
         selectedBarFrame.size.height = selectedBarHeight
         selectedBar.frame = selectedBarFrame
     }
@@ -188,4 +204,17 @@ open class ButtonBarView: UICollectionView {
         super.layoutSubviews()
         updateSelectedBarYPosition()
     }
+    
+    private func updateSelectedBarXPosition() {
+        var selectedBarFrame = selectedBar.frame
+        selectedBarFrame.origin.x = (frame.size.width - selectedBarWidth) / 2
+        selectedBarFrame.size.width = selectedBarWidth
+        selectedBar.frame = selectedBarFrame
+    }
+    
+    private func updateCornerRadius() {
+        selectedBar.clipsToBounds = true
+        selectedBar.layer.cornerRadius = selectedBarHasRoundedCorners ? selectedBarHeight / 2 : 0
+    }
+
 }
